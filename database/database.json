@@ -1,0 +1,25 @@
+[
+  {
+    "name": "Test 01",
+    "description": "desc for test01",
+    "image": "NFT-src",
+    "attributes": [
+      {
+        "trait_type": "Background",
+        "value": "1-1"
+      },
+      {
+        "trait_type": "Box",
+        "value": "1-2"
+      },
+      {
+        "trait_type": "item",
+        "value": "1-3"
+      },
+      {
+        "trait_type": "key_field",
+        "value": "1-4"
+      }
+    ]
+  }
+]
