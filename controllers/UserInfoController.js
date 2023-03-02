@@ -121,17 +121,18 @@ exports.addEmail = async (req, res) => {
 
 exports.authDiscord = async (req, res) => {
   const code = req.query.code;
-  res.redirect(`http://localhost:3000/home?d-code=${code}`);
+  console.log(code, "here 1 code");
+  res.redirect(`http://localhost:3000/side-quests?d-code=${code}`);
 };
 
 exports.authTwitch = async (req, res) => {
   const code = req.query.code;
-  res.redirect(`http://localhost:3000/home?ch-code=${code}`);
+  res.redirect(`http://localhost:3000/side-quests?ch-code=${code}`);
 };
 
 exports.authTwitter = async (req, res) => {
   const code = req.query.code;
-  res.redirect(`http://localhost:3000/home?t-code=${code}`);
+  res.redirect(`http://localhost:3000/side-quests?t-code=${code}`);
 };
 
 exports.processAuth = async (req, res) => {
@@ -160,38 +161,38 @@ exports.processAuth = async (req, res) => {
 const processAuthDiscord = async (req, res) => {
   const code = req.body.codeValue;
   const params = new URLSearchParams();
-
-  let user;
-  params.append("client_id", process.env.DISCORD_CLIENT_ID);
-  params.append("client_secret", process.env.DISCORD_CLIENT_SECRET);
-  params.append("grant_type", "authorization_code");
-  params.append("code", code);
-  params.append("redirect_uri", "http://localhost:3030/api/user/authDiscord");
+  console.log(code, "here 2 code");
+  // let user;
+  // params.append("client_id", process.env.DISCORD_CLIENT_ID);
+  // params.append("client_secret", process.env.DISCORD_CLIENT_SECRET);
+  // params.append("grant_type", "authorization_code");
+  // params.append("code", code);
+  // params.append("redirect_uri", "http://localhost:3030/api/user/authDiscord");
   try {
-    const response = await axios.post(
-      "https://discord.com/api/oauth2/token",
-      params
-    );
-    const { access_token, token_type } = response.data;
-    const userDataResponse = await axios.get(
-      "https://discord.com/api/users/@me",
-      {
-        headers: {
-          authorization: `${token_type} ${access_token}`,
-        },
-      }
-    );
-    const guilds = await axios.get("https://discord.com/api/users/@me/guilds", {
-      headers: {
-        authorization: `${token_type} ${access_token}`,
-      },
-    });
-    console.log("Data: ", userDataResponse.data);
-    console.log("Data: ", guilds.data);
-    user = {
-      username: userDataResponse.data.username,
-      email: userDataResponse.data.email,
-    };
+    // const response = await axios.post(
+    //   "https://discord.com/api/oauth2/token",
+    //   params
+    // );
+    // const { access_token, token_type } = response.data;
+    // const userDataResponse = await axios.get(
+    //   "https://discord.com/api/users/@me",
+    //   {
+    //     headers: {
+    //       authorization: `${token_type} ${access_token}`,
+    //     },
+    //   }
+    // );
+    // const guilds = await axios.get("https://discord.com/api/users/@me/guilds", {
+    //   headers: {
+    //     authorization: `${token_type} ${access_token}`,
+    //   },
+    // });
+    // console.log("Data: ", userDataResponse.data);
+    // console.log("Data: ", guilds.data);
+    // user = {
+    //   username: userDataResponse.data.username,
+    //   email: userDataResponse.data.email,
+    // };
 
     const findQuery = {
       wallet_address: req.wallet.address,
