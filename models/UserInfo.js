@@ -17,7 +17,7 @@ const UserInfoSchema = new Schema({
   },
   email: {
     type: String,
-    required: false,
+    required: true,
   },
   twitter: {
     type: String,

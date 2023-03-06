@@ -18,8 +18,7 @@ exports.getNonce = async (req, res) => {
 exports.signUser = async (req, res) => {
   if (req.body) {
     try {
-      const { message, signature } = req.body;
-
+      const { email, message, signature } = req.body;
       const messageSIWE = new SiweMessage(message);
       const provider = ethers.getDefaultProvider();
       const fields = await messageSIWE.validate(signature, provider);
@@ -35,22 +34,39 @@ exports.signUser = async (req, res) => {
       console.log(`Successfully signed on the server`);
 
       const isNew = await userHelper.getUser(fields.address);
+
       if (isNew) {
-        await userHelper.addUser(fields.address);
-      }
+        if (email === "") {
+          res.status(401).send({ error: "email required" });
+        } else {
+          await userHelper.addUser(fields.address, email);
+          const token = jwt.sign(
+            { address: fields.address },
+            process.env.JWT_SECRET_KEY,
+            {
+              expiresIn: "2h",
+            }
+          );
 
-      const token = jwt.sign(
-        { address: fields.address },
-        process.env.JWT_SECRET_KEY,
-        {
-          expiresIn: "2h",
+          res.status(200).json({
+            token,
+            message: "Successfully signed!",
+          });
         }
-      );
+      } else {
+        const token = jwt.sign(
+          { address: fields.address },
+          process.env.JWT_SECRET_KEY,
+          {
+            expiresIn: "2h",
+          }
+        );
 
-      res.status(200).json({
-        token,
-        message: "Successfully signed!",
-      });
+        res.status(200).json({
+          token,
+          message: "Successfully signed!",
+        });
+      }
     } catch (error) {
       res.status(400).send({ error });
     }
@@ -121,7 +137,6 @@ exports.addEmail = async (req, res) => {
 
 exports.authDiscord = async (req, res) => {
   const code = req.query.code;
-  console.log(code, "here 1 code");
   res.redirect(`http://localhost:3000/side-quests?d-code=${code}`);
 };
 
@@ -161,7 +176,6 @@ exports.processAuth = async (req, res) => {
 const processAuthDiscord = async (req, res) => {
   const code = req.body.codeValue;
   const params = new URLSearchParams();
-  console.log(code, "here 2 code");
   // let user;
   // params.append("client_id", process.env.DISCORD_CLIENT_ID);
   // params.append("client_secret", process.env.DISCORD_CLIENT_SECRET);

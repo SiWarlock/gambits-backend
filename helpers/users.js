@@ -1,8 +1,9 @@
 const UserInfos = require("../models/UserInfo");
 
-exports.addUser = async (wallet_address) => {
+exports.addUser = async (wallet_address, email) => {
   const _insertData = new UserInfos({
     wallet_address,
+    email,
     bonus_percent: 0,
     deposit_balance: 0,
   });
