@@ -18,11 +18,10 @@ exports.getNonce = async (req, res) => {
 exports.signUser = async (req, res) => {
   if (req.body) {
     try {
-      const { email, message, signature } = req.body;
+      const { email, referralCode, message, signature } = req.body;
       const messageSIWE = new SiweMessage(message);
       const provider = ethers.getDefaultProvider();
       const fields = await messageSIWE.validate(signature, provider);
-
       if (fields.nonce !== nonce) {
         res.status(422).json({
           message: "Invalid nonce: Client and Server nonce mismatch",
@@ -39,6 +38,15 @@ exports.signUser = async (req, res) => {
         if (email === "") {
           res.status(401).send({ error: "email required" });
         } else {
+          if (!!referralCode) {
+            try {
+              const result = await UserInfos.findById(referralCode);
+              result.invite_sent = result.invite_sent + 1;
+              result.save();
+            } catch (err) {
+              res.status(405).send({ error });
+            }
+          }
           await userHelper.addUser(fields.address, email);
           const token = jwt.sign(
             { address: fields.address },
@@ -86,9 +94,11 @@ exports.getUserInfoData = async (req, res) => {
         res.json({
           success: true,
           info: {
+            id: result[0]._id,
             wallet_address: result[0].wallet_address,
             deposit_balance: result[0].deposit_balance,
             bonus_percent: result[0].bonus_percent,
+            invite_sent: result[0].invite_sent,
             email: result[0]?.email,
             discord_link: !!result[0]?.discord,
             twitch_link: !!result[0]?.twitch,

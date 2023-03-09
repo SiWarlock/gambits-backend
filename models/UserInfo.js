@@ -15,6 +15,10 @@ const UserInfoSchema = new Schema({
     type: Number,
     required: 0,
   },
+  invite_sent:{
+    type: Number,
+    required: 0,
+  },
   email: {
     type: String,
     required: true,

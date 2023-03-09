@@ -6,6 +6,7 @@ exports.addUser = async (wallet_address, email) => {
     email,
     bonus_percent: 0,
     deposit_balance: 0,
+    invite_sent: 0,
   });
   await _insertData.save();
 };
