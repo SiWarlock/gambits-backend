@@ -42,14 +42,6 @@ exports.signUser = async (req, res) => {
             try {
               const result = await UserInfos.findById(referralCode);
               result.invite_sent = result.invite_sent + 1;
-              if (result.invite_sent === 10)
-                result.bonus_percent = result.bonus_percent + 20;
-              if (result.invite_sent === 20)
-                result.bonus_percent = result.bonus_percent + 20;
-              if (result.invite_sent === 30)
-                result.bonus_percent = result.bonus_percent + 20;
-              if (result.invite_sent === 40)
-                result.bonus_percent = result.bonus_percent + 20;
               result.save();
             } catch (err) {
               res.status(405).send({ error });
