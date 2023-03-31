@@ -5,9 +5,20 @@ const UserInfos = require("../models/UserInfo");
 const userHelper = require("../helpers/users");
 const jwt = require("jsonwebtoken");
 const { validateHeader } = require("../validation/header");
+// const nodemailer = require("nodemailer");
+// const sendGridTransport = require("nodemailer-sendgrid-transport");
+const sgMail = require("@sendgrid/mail");
 
 // Store the nonce for checking against log-in
 let nonce;
+
+// const transporter = nodemailer.createTransport(
+//   sendGridTransport({
+//     auth: {
+//       api_key: SENDGRID_API,
+//     },
+//   })
+// );
 
 exports.getNonce = async (req, res) => {
   nonce = generateNonce();
@@ -114,6 +125,67 @@ exports.getUserInfoData = async (req, res) => {
   } else {
     res.status(403).send({ error: "Invalid token" });
   }
+};
+
+exports.emailVerify = async (req, res) => {
+  const email = req.body.email;
+  const code = req.body.code;
+  sgMail.setApiKey(process.env.SENDGRID_API);
+  const msg = {
+    to: email,
+    from: "sales@gambits.com",
+    subject: "Gambits Confirm Email",
+    replyTo: "sales@gambits.com",
+    html: `
+            <div style="color:#757575 !important">
+            <h1 style="text-align:center">Gambits</h1>
+            <p style="font-family: 'Open Sans','Roboto','Helvetica Neue',Helvetica,Arial,sans-serif;
+            font-size: 16px;
+            color: #757575;
+            line-height: 150%;
+            letter-spacing: normal;">Hello </p>
+            <p style="font-family: 'Open Sans','Roboto','Helvetica Neue',Helvetica,Arial,sans-serif;
+            font-size: 16px;
+            color: #757575;
+            line-height: 150%;
+            letter-spacing: normal;">Thank you for signing up to Gambits! We're excited to have you onboard and will be happy to help you set everything up.</p>
+            <p style="font-family: 'Open Sans','Roboto','Helvetica Neue',Helvetica,Arial,sans-serif;
+            font-size: 16px;
+            color: #757575;
+            line-height: 150%;
+            letter-spacing: normal;">Here are verification code for your email(${email}).</p>
+            <p style="font-family: 'Open Sans','Roboto','Helvetica Neue',Helvetica,Arial,sans-serif;
+            font-size: 25px;
+            color: #757575;
+            line-height: 150%;
+            letter-spacing: normal;">${code}</p>
+            <p style="font-family: 'Open Sans','Roboto','Helvetica Neue',Helvetica,Arial,sans-serif;
+            font-size: 16px;
+            color: #757575;
+            line-height: 150%;
+            letter-spacing: normal;">Please let us know if you have any questions, feature requests, or general feedback simply by replying to this email.</p>
+            <p style="font-family: 'Open Sans','Roboto','Helvetica Neue',Helvetica,Arial,sans-serif;
+            font-size: 16px;
+            color: #757575;
+            line-height: 150%;
+            letter-spacing: normal;">Best regards,</p>
+            <p style="font-family: 'Open Sans','Roboto','Helvetica Neue',Helvetica,Arial,sans-serif;
+            font-size: 16px;
+            color: #757575;
+            line-height: 150%;
+            letter-spacing: normal;">Gambits Support team</p>
+            </div>
+            `,
+  };
+  sgMail
+    .send(msg)
+    .then(() => {
+      res.status(200).send({ message: "Successfully" });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(400).send({ error: error });
+    });
 };
 
 exports.addEmail = async (req, res) => {

@@ -11,5 +11,6 @@ router.get("/authTwitch", UserInfoController.authTwitch);
 router.get("/authTwitter", UserInfoController.authTwitter);
 router.post("/auth", UserInfoController.processAuth);
 router.get("/info", UserInfoController.getUserInfoData);
+router.post("/emailVerify", UserInfoController.emailVerify);
 
 module.exports = router;
