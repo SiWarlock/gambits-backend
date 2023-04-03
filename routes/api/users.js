@@ -12,5 +12,9 @@ router.get("/authTwitter", UserInfoController.authTwitter);
 router.post("/auth", UserInfoController.processAuth);
 router.get("/info", UserInfoController.getUserInfoData);
 router.post("/emailVerify", UserInfoController.emailVerify);
+router.post(
+  "/getFreePlayBonusAmount",
+  UserInfoController.getFreePlayBonusAmount
+);
 
 module.exports = router;

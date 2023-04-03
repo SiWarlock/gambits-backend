@@ -54,11 +54,11 @@ exports.signUser = async (req, res) => {
               const result = await UserInfos.findById(referralCode);
               result.invite_sent = result.invite_sent + 1;
               result.save();
+              await userHelper.addUser(fields.address, email, referralCode);
             } catch (err) {
               res.status(405).send({ error });
             }
-          }
-          await userHelper.addUser(fields.address, email);
+          } else await userHelper.addUser(fields.address, email, "");
           const token = jwt.sign(
             { address: fields.address },
             process.env.JWT_SECRET_KEY,
@@ -111,6 +111,7 @@ exports.getUserInfoData = async (req, res) => {
             bonus_percent: result[0].bonus_percent,
             invite_sent: result[0].invite_sent,
             email: result[0]?.email,
+            referral_id: result[0]?.referral_id,
             discord_link: !!result[0]?.discord,
             twitch_link: !!result[0]?.twitch,
             twitter_link: !!result[0]?.twitter,
@@ -186,6 +187,29 @@ exports.emailVerify = async (req, res) => {
       console.error(error);
       res.status(400).send({ error: error });
     });
+};
+
+exports.getFreePlayBonusAmount = async (req, res) => {
+  if (validateHeader(req)) {
+    try {
+      const { id } = req.body;
+      const result = await UserInfos.find({
+        referral_id: id,
+      });
+      var amount = 0;
+      for (i = 0; i < result.length; i++) {
+        amount += result[i].deposit_balance;
+      }
+      res.status(200).json({
+        success: true,
+        amount: amount,
+      });
+    } catch (err) {
+      res.status(400);
+    }
+  } else {
+    res.status(403).send({ error: "Invalid token" });
+  }
 };
 
 exports.addEmail = async (req, res) => {

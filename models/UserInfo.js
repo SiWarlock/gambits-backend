@@ -15,9 +15,13 @@ const UserInfoSchema = new Schema({
     type: Number,
     required: 0,
   },
-  invite_sent:{
+  invite_sent: {
     type: Number,
     required: 0,
+  },
+  referral_id: {
+    type: String,
+    required: false,
   },
   email: {
     type: String,
