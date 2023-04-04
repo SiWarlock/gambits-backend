@@ -16,7 +16,9 @@ const cors = require("cors");
 const app = express();
 
 //Add Cors
-app.use(cors());
+app.use(cors({
+  origin: 'https://marvelous-lolly-479b6b.netlify.app'
+}));
 app.options("*", cors());
 app.use(express.static("public"));
 
