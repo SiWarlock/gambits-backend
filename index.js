@@ -54,6 +54,10 @@ mongoose
 // app.use("/api/logo", accesslogo);
 app.use("/api/user", userApi);
 app.use("/api/shared", sharedApi);
+app.use(express.static(path.join(__dirname, "../gambits-frontend/build")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../gambits-frontend/build/index.html"));
+});
 
 const port = process.env.SERVER_PORT || 8000;
 
