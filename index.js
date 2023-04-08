@@ -4,16 +4,20 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 // const passport = require("passport");
 const request = require("request");
+const path = require("path");
+const compression = require("compression");
 
 // const accesslogo = require('./routes/api/accesslogo');
 const userApi = require("./routes/api/users");
 const sharedApi = require("./routes/api/shared");
+const twitterApi = require("./routes/api/twitter");
 
 const userHelper = require("./helpers/users");
 
 const cors = require("cors");
 
 const app = express();
+app.use(compression());
 
 //Add Cors
 app.use(cors());
@@ -54,6 +58,7 @@ mongoose
 // app.use("/api/logo", accesslogo);
 app.use("/api/user", userApi);
 app.use("/api/shared", sharedApi);
+app.use("/api/twitter", twitterApi);
 app.use(express.static(path.join(__dirname, "../gambits-frontend/build")));
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../gambits-frontend/build/index.html"));
