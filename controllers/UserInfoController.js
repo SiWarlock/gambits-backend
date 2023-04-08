@@ -5,20 +5,10 @@ const UserInfos = require("../models/UserInfo");
 const userHelper = require("../helpers/users");
 const jwt = require("jsonwebtoken");
 const { validateHeader } = require("../validation/header");
-// const nodemailer = require("nodemailer");
-// const sendGridTransport = require("nodemailer-sendgrid-transport");
 const sgMail = require("@sendgrid/mail");
 
 // Store the nonce for checking against log-in
 let nonce;
-
-// const transporter = nodemailer.createTransport(
-//   sendGridTransport({
-//     auth: {
-//       api_key: SENDGRID_API,
-//     },
-//   })
-// );
 
 exports.getNonce = async (req, res) => {
   nonce = generateNonce();
