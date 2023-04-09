@@ -12,7 +12,6 @@ let nonce;
 
 exports.getNonce = async (req, res) => {
   nonce = generateNonce();
-  console.log(`Nonce generated on server: ${nonce}`);
   res.send(nonce);
 };
 
@@ -29,9 +28,7 @@ exports.signUser = async (req, res) => {
         });
         return;
       }
-      console.log(`SIWE message `);
       console.debug(fields);
-      console.log(`Successfully signed on the server`);
 
       const isNew = await userHelper.getUser(fields.address);
 
@@ -271,39 +268,8 @@ exports.processAuth = async (req, res) => {
 
 const processAuthDiscord = async (req, res) => {
   const code = req.body.codeValue;
-  const params = new URLSearchParams();
-  // let user;
-  // params.append("client_id", process.env.DISCORD_CLIENT_ID);
-  // params.append("client_secret", process.env.DISCORD_CLIENT_SECRET);
-  // params.append("grant_type", "authorization_code");
-  // params.append("code", code);
-  // params.append("redirect_uri", "http://localhost:3030/api/user/authDiscord");
+  
   try {
-    // const response = await axios.post(
-    //   "https://discord.com/api/oauth2/token",
-    //   params
-    // );
-    // const { access_token, token_type } = response.data;
-    // const userDataResponse = await axios.get(
-    //   "https://discord.com/api/users/@me",
-    //   {
-    //     headers: {
-    //       authorization: `${token_type} ${access_token}`,
-    //     },
-    //   }
-    // );
-    // const guilds = await axios.get("https://discord.com/api/users/@me/guilds", {
-    //   headers: {
-    //     authorization: `${token_type} ${access_token}`,
-    //   },
-    // });
-    // console.log("Data: ", userDataResponse.data);
-    // console.log("Data: ", guilds.data);
-    // user = {
-    //   username: userDataResponse.data.username,
-    //   email: userDataResponse.data.email,
-    // };
-
     const findQuery = {
       wallet_address: req.wallet.address,
     };
@@ -330,16 +296,7 @@ const processAuthDiscord = async (req, res) => {
 
 const processAuthTwitch = async (req, res) => {
   const code = req.body.codeValue;
-  // const params = new URLSearchParams();
-
-  // let user;
-  // params.append("client_id", process.env.TWITCH_CLIENT_ID);
-  // params.append("client_secret", process.env.TWITCH_CLIENT_SECRET);
-  // params.append("grant_type", "authorization_code");
-  // params.append("code", code);
-  // params.append("redirect_uri", "http://localhost:3030/api/user/authTwitch");
   try {
-    // await axios.post("https://id.twitch.tv/oauth2/token", params);
     const findQuery = {
       wallet_address: req.wallet.address,
     };
