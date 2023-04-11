@@ -1,35 +1,22 @@
 const axios = require("axios");
 
-const twitterUsername = "gambitscom";
-
 exports.getFeed = async (req, res) => {
   axios({
     method: "GET",
-    url: `https://api.twitter.com/2/users/by/username/${twitterUsername}`,
+    url: `https://api.twitter.com/2/users/${process.env.TWITTER_USER_ID}/tweets`,
     headers: {
       Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
       "User-Agent": "v2FilteredStreamJS",
     },
+    params: {
+      "tweet.fields": "attachments,created_at", // include attachments field to get image
+      "media.fields": "preview_image_url,url",
+      expansions: "attachments.media_keys",
+      max_results: 10, // get 10 latest tweets
+    },
   })
     .then((response) => {
-      const userId = response.data.data.id;
-      return axios({
-        method: "GET",
-        url: `https://api.twitter.com/2/users/${userId}/tweets`,
-        headers: {
-          Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
-          "User-Agent": "v2FilteredStreamJS",
-        },
-        params: {
-          "tweet.fields": "attachments,created_at", // include attachments field to get image
-          "media.fields": "url",
-          max_results: 10, // get 10 latest tweets
-        },
-      });
-    })
-    .then((response) => {
-      const tweets = response.data.data;
-      res.status(200).send({ message: "success", feed: tweets });
+      res.status(200).send({ message: "success", feed: response.data });
     })
     .catch((error) => {
       console.error(error);
