@@ -12,7 +12,8 @@ exports.getFeed = async (req, res) => {
       "tweet.fields": "attachments,created_at", // include attachments field to get image
       "media.fields": "preview_image_url,url",
       expansions: "attachments.media_keys",
-      max_results: 10, // get 10 latest tweets
+      max_results: 10,
+      exclude: "replies",
     },
   })
     .then((response) => {
