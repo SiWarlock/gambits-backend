@@ -9,15 +9,23 @@ exports.getFeed = async (req, res) => {
       "User-Agent": "v2FilteredStreamJS",
     },
     params: {
-      "tweet.fields": "attachments,created_at", // include attachments field to get image
+      "tweet.fields": "attachments,created_at,in_reply_to_user_id", // include attachments field to get image
       "media.fields": "preview_image_url,url",
       expansions: "attachments.media_keys",
-      max_results: 10,
+      max_results: 20,
       exclude: "replies",
     },
   })
     .then((response) => {
-      res.status(200).send({ message: "success", feed: response.data });
+      const originalTweets = response.data.data.filter(
+        (tweet) => !tweet.in_reply_to_user_id
+      );
+      const data = originalTweets.slice(0, 10);
+      const result = {
+        data: data,
+        includes: response.data.includes,
+      };
+      res.status(200).send({ message: "success", feed: result });
     })
     .catch((error) => {
       console.error(error);
